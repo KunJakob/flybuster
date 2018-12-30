@@ -1,0 +1,86 @@
+buildscript {
+    repositories {
+        maven {
+            name = 'forge'
+            url = 'http://files.minecraftforge.net/maven'
+        }
+        maven {
+            name = 'sponge'
+            url = 'https://repo.spongepowered.org/maven'
+        }
+    }
+
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'org.spongepowered:spongegradle:0.8-SNAPSHOT'
+    }
+}
+
+plugins {
+    id 'org.spongepowered.plugin' version '0.8.1'
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'org.spongepowered.gradle'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+archivesBaseName = project.name
+version = "1.0"
+
+configurations {
+    mixins
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        name = "Sponge"
+        url = "http://repo.spongepowered.org/maven"
+    }
+    maven {
+        name = "Forge"
+        url = "http://files.minecraftforge.net/maven"
+    }
+}
+
+dependencies {
+    compile 'org.spongepowered:spongeforge:1.12.2-2611-7.1.0-BETA-2931:dev'
+    compile 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+    mixins 'org.spongepowered:spongeforge:1.12.2-2611-7.1.0-BETA-2931:dev'
+
+}
+
+minecraft {
+    forgeVersion = project.forgeVersion
+    runDir = 'run'
+    mappings = project.mcpMappings
+    makeObfSourceJar = false
+}
+
+mixin {
+    importConfig 'mixins'
+    add sourceSets.main, "mixins.flybuster.refmap.json"
+}
+
+jar {
+    manifest {
+        attributes(
+                'Built-By': System.properties['user.name'],
+                'Created-By': System.properties['java.vm.version'] + ' (' + System.properties['java.vm.vendor'] + ')',
+                'Implementation-Title': project.name,
+                'Implementation-Version': version,
+                'Implementation-Vendor': url,
+                'FMLCorePluginContainsMod': true,
+                'FMLCorePlugin': 'mc.cosmos.flybuster.FlyBusterCoreMod',
+                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+                'TweakOrder': 0,
+        )
+    }
+}
+
+sponge.plugin.id = "flybuster"
