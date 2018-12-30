@@ -20,7 +20,7 @@ import org.spongepowered.api.text.Text;
         },
         version = "1.0"
 )
-public class PokeSeek {
+public class FlyBuster {
 
     @Inject
     private Logger logger;
